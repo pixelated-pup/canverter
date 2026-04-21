@@ -16,6 +16,7 @@ cortex-m-rt = "0.7"
 panic-halt = "1.0"
 embedded-hal = "1.0"
 stm32g4xx-hal = { version = "0.1", features = ["rt", "stm32g431"] }
+color = { version = "0.3.2", features = ["libm"], default-features = false }
 
 [profile.dev]
 # Rust debug is too slow.

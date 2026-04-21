@@ -1,6 +1,7 @@
 #![no_std]
 #![no_main]
 
+use color::palette::css;
 use cortex_m_rt::entry;
 use panic_halt as _; // Halts on panic
 
@@ -17,6 +18,10 @@ use stm32g4xx_hal::{
     timer::Timer,
 };
 
+use crate::led::LED;
+
+mod led;
+
 #[entry]
 fn main() -> ! {
     let dp = stm32::Peripherals::take().unwrap();
@@ -32,7 +37,7 @@ fn main() -> ! {
         gpioa.pa1.into_alternate(),
         gpiob.pb10.into_alternate(),
     );
-    let (mut c1, mut c2, mut c3) = dp.TIM2.pwm(led_pins, 100.Hz(), &mut rcc);
+    let mut led = LED::new(dp.TIM2.pwm(led_pins, 100.Hz(), &mut rcc));
 
     let timer = Timer::new(dp.TIM1, &rcc.clocks);
     let mut delay_timer = timer.start_count_down(100.millis()).delay();
@@ -49,15 +54,11 @@ fn main() -> ! {
         // let sample = adc.convert(&analog_pin, SampleTime::Cycles_640_5);
         // let millivolts = adc.sample_to_millivolts(sample);
 
-        c1.set_duty_cycle_percent(1);
-        c2.set_duty_cycle_percent(0);
-        c3.set_duty_cycle_percent(0);
+        led.set(css::RED);
 
         delay_timer.delay_ms(1000);
 
-        c1.set_duty_cycle_percent(0);
-        c2.set_duty_cycle_percent(0);
-        c3.set_duty_cycle_percent(0);
+        led.set(css::BLACK);
 
         delay_timer.delay_ms(1000);
     }
