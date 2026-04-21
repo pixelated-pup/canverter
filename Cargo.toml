@@ -1,0 +1,33 @@
+[package]
+edition = "2024"
+name = "canverter"
+version = "0.1.0"
+
+[[bin]]
+name = "canverter"
+test = false
+doctest = false
+bench = false
+
+[dependencies]
+embedded-can = "0.4.1"
+cortex-m = "0.7"
+cortex-m-rt = "0.7"
+panic-halt = "1.0"
+embedded-hal = "1.0"
+stm32g4xx-hal = { version = "0.1", features = ["rt", "stm32g431"] }
+
+[profile.dev]
+# Rust debug is too slow.
+# For debug builds always builds with some optimization
+opt-level = "s"
+debug = true
+
+[profile.release]
+codegen-units = 1        # LLVM can perform better optimizations using a single thread
+debug = 2
+debug-assertions = false
+incremental = false
+lto = 'fat'
+opt-level = 's'
+overflow-checks = false
